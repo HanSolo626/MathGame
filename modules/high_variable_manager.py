@@ -94,6 +94,9 @@ class VariableManager:
         self.tries = 5
         self.fails = 0
         self.counter = 0
+        self.counter_num_to_add = 3
+        self.solved_equations = []
+        self.solved_num = 0
 
 
         #self.opls = OperationList()
@@ -201,7 +204,7 @@ class VariableManager:
             
                     
             self.hvm.current_level = level
-            
+            self.hvm.reset_game()
             return level
         return func
 
@@ -274,7 +277,11 @@ class VariableManager:
         if int(self.current_answer) == self.current_level[self.current_level_num][2]:
             self.current_level_num += 1
             self.current_answer = ''
-            self.counter = 0
+            self.solved_equations.append(self.current_level[self.current_level_num])
+            #self.counter = 0
+            self.counter -= self.counter_num_to_add
+            if self.counter < 0:
+                self.counter = 0
             self.sm.play_effect("ding")
             if self.current_level_num == self.current_level.__len__():
                 self.set_current_page(5)
@@ -282,37 +289,45 @@ class VariableManager:
             #self.current_answer = ''
             #self.fails += 1
             #self.counter = 0
-            self.check_gameover(False)
+            self.check_gameover(False, False)
 
         return None
     
-    def check_gameover(self, a):
+    def check_gameover(self, a, total_gameover=True):
         if a:
             self.hvm.current_answer = ''
-            self.hvm.fails += 1
-            self.hvm.counter = 0
+            #self.hvm.fails += 1
+            if total_gameover:
+                self.hvm.fails = 5
+            self.hvm.counter += 1
             self.hvm.sm.play_effect("buzzer")
         else:
             self.current_answer = ''
-            self.fails += 1
-            self.counter = 0
+            #self.fails += 1
+            if total_gameover:
+                self.fails = 5
+            self.counter += 1
             self.sm.play_effect("buzzer")
         if self.fails >= 5:
             if a:
                 self.hvm.set_current_page(4)
             else:
                 self.set_current_page(4)
+            self.solved_num = self.solved_equations.__len__()
     
     def reset_game(self):
         self.current_answer = ""
         self.tries = 5
         self.fails = 0
         self.counter = 0
+        self.solved_equations = []
+        self.solved_num = 0
+        print("test")
 
     def _check_gameover(self):
         if self.fails >= 5:
             self._set_current_page(4)
-            self.reset_game()
+            #self.reset_game() NOTE
             return False
         else:
             return True
@@ -489,7 +504,7 @@ class GameOverScreen(Page):
 
         self.set_button_list([
             GameOverTitle(VariableManager.none, 0,0),
-            PlayAgain(VariableManager.set_current_page(ai_game, 1), 850, 500),
+            PlayAgain(VariableManager.set_current_page(ai_game, 1), 850, 700),
             QuitButton(VariableManager.exit_game, 50, 1000)
         ])
 

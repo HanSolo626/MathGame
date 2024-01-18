@@ -185,6 +185,12 @@ class Main:
                 self.hvm.reset_game()
                 self.pies_made = False
 
+            if self.hvm.current_class_num == 4:
+                if self.hvm.solved_num > 5:
+                    self.FL.draw_words("Equations solved: "+str(self.hvm.solved_num), 100, (1000, 550), False, "green", True)
+                else:
+                    self.FL.draw_words("Equations solved: "+str(self.hvm.solved_num), 100, (1000, 550), False, "red", True)
+
             
             if self.hvm.current_class_num == 3:
 
@@ -210,23 +216,23 @@ class Main:
 
                 #self.FL.draw_words()
                 
-                for x in range(0, self.hvm.tries):
-                    self.FL.draw_image(self.iml.get_image("greyed_x"), ((200*(x+1)+100, 100)), False)
-                for x in range(0, self.hvm.fails):
-                    self.FL.draw_image(self.iml.get_image("red_x"), ((200*(x+1)+100, 100)), False)
+                #for x in range(0, self.hvm.tries):
+                #    self.FL.draw_image(self.iml.get_image("greyed_x"), ((200*(x+1)+100, 100)), False)
+                #for x in range(0, self.hvm.fails):
+                #    self.FL.draw_image(self.iml.get_image("red_x"), ((200*(x+1)+100, 100)), False)
 
                 try:
-                    self.FL.draw_image(self.pie_clocks[self.hvm.counter], (1500, 200), True)
+                    self.FL.draw_image(self.pie_clocks[self.hvm.counter], (1000, 200), True)
                 except:
                     self.pies_made = self.hvm._check_gameover()
 
                 if self.get_clock_display() < 5:
-                    self.FL.draw_words(str(self.get_clock_display()-1), 150, (1500, 200), False, "red", True)
+                    self.FL.draw_words(str(self.get_clock_display()-1), 150, (1000, 200), False, "red", True)
                 else:
-                    self.FL.draw_words(str(self.get_clock_display()-1), 150, (1500, 200), False, "black", True)
+                    self.FL.draw_words(str(self.get_clock_display()-1), 150, (1000, 200), False, "black", True)
 
 
-                self.FL.draw_image(self.iml.get_image("clock_outline"), (1500, 200), True)
+                self.FL.draw_image(self.iml.get_image("clock_outline"), (1000, 200), True)
 
                 #self.FL.draw_words(str(self.hvm.current_level_num)+" "+str(self.hvm.current_level.__len__()), 40, (0,0), False, "black", False)
                 self.FL.draw_words(str(self.hvm.current_level.__len__()), 40, (0,0), False, "black", False)
