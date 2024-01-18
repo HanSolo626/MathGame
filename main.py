@@ -17,6 +17,7 @@ class Main:
 
         self.screen = pygame.display.set_mode((2000, 1200), pygame.SCALED | pygame.FULLSCREEN)
         pygame.display.set_caption("Math Game")
+        pygame.display.set_icon(pygame.image.load("math game logo.png"))
 
         self.FL = Facillimum_Library(self.screen)
         
