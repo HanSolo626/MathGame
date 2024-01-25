@@ -39,6 +39,10 @@ class ImageManager:
             "play again hover":"playagain_button_hover.png",
             "gameover screen":"gameover_title.png",
             "victory":"victory_screen.png",
+            "stick man happy":"stick man happy.png",
+            "stick man":"stick man normal.png",
+            "stick man sad":"stick man sad.png",
+            "stick man worried":"stick man worried.png",
 
         }
 

@@ -16,8 +16,8 @@ class Main:
         pygame.init()
 
         self.screen = pygame.display.set_mode((2000, 1200), pygame.SCALED | pygame.FULLSCREEN)
-        pygame.display.set_caption("Math Game")
-        pygame.display.set_icon(pygame.image.load("math game logo.png"))
+        pygame.display.set_caption("MATH Time Attack")
+        pygame.display.set_icon(pygame.image.load("math game logo time.png"))
 
         self.FL = Facillimum_Library(self.screen)
         
@@ -42,6 +42,8 @@ class Main:
         self.pie_amount = 0
         self.pie_clocks = []
         self.pies_made = False
+
+        self.clock_outline_img = pygame.transform.scale(self.iml.get_image("clock_outline"), (150, 150))
 
 
     def check_events(self):
@@ -138,7 +140,9 @@ class Main:
 
 
         for filename in self.pie_clocks:
-            j.append(pygame.transform.flip(pygame.transform.rotate(pygame.image.load(filename), 90), True, False))
+            f = pygame.transform.flip(pygame.transform.rotate(pygame.image.load(filename), 90), True, False)
+            f = pygame.transform.scale(f, (120, 120))
+            j.append(f)
 
         for file in self.pie_clocks:
             os.remove(file)
@@ -180,6 +184,10 @@ class Main:
             # Update and draw everything
             
             self.hvm.current_page.draw_self()
+
+            if self.hvm.current_class_num == 0:
+                self.FL.draw_image(self.iml.get_image("stick man"), (300, 900), True)
+
             if self.hvm.current_class_num == 1:
                 self.FL.draw_words(self.hvm.text_operation, 60, (1000,250), False, "white", True)
                 self.FL.draw_words(self.hvm.text_difficulty, 60, (1000, 450), False, "white", True)
@@ -189,8 +197,10 @@ class Main:
             if self.hvm.current_class_num == 4:
                 if self.hvm.solved_num > 5:
                     self.FL.draw_words("Equations solved: "+str(self.hvm.solved_num), 100, (1000, 550), False, "green", True)
+                    self.FL.draw_image(self.iml.get_image("stick man happy"), (1600, 800), True)
                 else:
                     self.FL.draw_words("Equations solved: "+str(self.hvm.solved_num), 100, (1000, 550), False, "red", True)
+                    self.FL.draw_image(self.iml.get_image("stick man sad"), (1600, 800), True)
 
             
             if self.hvm.current_class_num == 3:
@@ -223,25 +233,34 @@ class Main:
                 #    self.FL.draw_image(self.iml.get_image("red_x"), ((200*(x+1)+100, 100)), False)
 
                 try:
-                    self.FL.draw_image(self.pie_clocks[self.hvm.counter], (1000, 200), True)
+                    self.FL.draw_image(self.pie_clocks[self.hvm.counter], (1750, 200), True)
                 except:
                     self.pies_made = self.hvm._check_gameover()
 
                 if self.get_clock_display() < 5:
-                    self.FL.draw_words(str(self.get_clock_display()-1), 150, (1000, 200), False, "red", True)
+                    self.FL.draw_words(str(self.get_clock_display()-1), 75, (1750, 200), False, "red", True)
+                    self.FL.draw_image(self.iml.get_image("stick man worried"), (1600, 800), True)
                 else:
-                    self.FL.draw_words(str(self.get_clock_display()-1), 150, (1000, 200), False, "black", True)
+                    self.FL.draw_words(str(self.get_clock_display()-1), 75, (1750, 200), False, "black", True)
+
+                    if self.get_clock_display() < 9:
+                        self.FL.draw_image(self.iml.get_image("stick man sad"), (1600, 800), True)
+                    elif self.get_clock_display() < 12:
+                        self.FL.draw_image(self.iml.get_image("stick man"), (1600, 800), True)
+                    else:
+                        self.FL.draw_image(self.iml.get_image("stick man happy"), (1600, 800), True)
 
 
-                self.FL.draw_image(self.iml.get_image("clock_outline"), (1000, 200), True)
+                self.FL.draw_image(self.clock_outline_img, (1750, 200), True)
 
                 #self.FL.draw_words(str(self.hvm.current_level_num)+" "+str(self.hvm.current_level.__len__()), 40, (0,0), False, "black", False)
-                self.FL.draw_words(str(self.hvm.current_level.__len__()), 40, (0,0), False, "black", False)
+                #self.FL.draw_words(str(self.hvm.current_level.__len__()), 40, (0,0), False, "black", False)
                 
         
                 if self.time >= 60:
                     self.hvm.counter += 1
                     self.time = 0
+
                     if self.get_clock_display() < 5 and self.get_clock_display() != 0:
                         self.sm.play_effect("beep")
                 else:

@@ -78,9 +78,9 @@ class VariableManager:
 
         self.difficulty_levels = {
             # name, [limit, time]
-            0:["Easy", [(0, 10), 12],[(0, 5), 12]],
-            1:["Medium", [(6,20), 10],[(0, 12), 12]],
-            2:["Advanced", [(15,50), 9],[(6,15), 10]],
+            0:["Easy", [(0, 10), 20],[(0, 5), 20]],
+            1:["Medium", [(6,20), 15],[(0, 12), 15]],
+            2:["Advanced", [(15,50), 15],[(6,15), 15]],
         }
 
         self.current_difficulty = 1
@@ -97,6 +97,7 @@ class VariableManager:
         self.counter_num_to_add = 3
         self.solved_equations = []
         self.solved_num = 0
+
 
 
         #self.opls = OperationList()
@@ -207,6 +208,67 @@ class VariableManager:
             self.hvm.reset_game()
             return level
         return func
+    
+
+
+    def second_generate_level_hvm(self):
+        level = []
+        equations = []
+        nums = []
+        if self.current_operation == 0:
+            g = self.current_operation + 1
+        else:
+            g = self.current_operation
+
+        b = self.difficulty_levels[self.current_difficulty][g][0][1] + 1
+        #for a in range(0, (b * b) + b):
+        #    level.append([])
+        for a in range(0, ((b-1) * (b-1)) + b):
+            nums.append(a)
+
+        for first in range(0, b):
+            for second in range(0, b):
+                n1 = first
+                n2 = second
+
+                if self.current_operation == 1 and first < second:
+                    
+                    c = [n2, n1]
+                else:
+                    c = [n1, n2]
+                
+                
+                if self.current_operation == 0:
+                    n3 = c[0] + c[1]
+                elif self.current_operation == 1:
+                    n3 = c[0] - c[1]
+                elif self.current_operation == 2:
+                    n3  = c[0] * c[1]
+                c.append(n3)
+                equations.append(c.copy())
+                c.clear()
+
+        
+        while equations != []:
+            selection = random.randint(0, nums.__len__())
+            #print(level.__len__())
+            level.append(equations.pop(selection))
+            
+            if nums != []:
+                nums.remove(nums.__len__()-1)
+            
+        for problem in level:
+            y = [problem[1], problem[0], problem[2]]
+            #if y in level:
+            #    level.remove(y)
+            for thing in level:
+                if y == thing:
+                    level.remove(y)
+        
+                
+        self.current_level = level
+        self.reset_game()
+        return level
 
 
             
@@ -261,7 +323,14 @@ class VariableManager:
                 self.hvm.counter = 0
                 self.hvm.sm.play_effect("ding")
                 if self.hvm.current_level_num == self.hvm.current_level.__len__():
-                    self.hvm.set_current_page(5)
+                    #self.hvm.set_current_page(5)
+                    if self.hvm.current_difficulty == 2:
+                        self.hvm.set_current_page(5)
+                    else:
+                        self.hvm.current_difficulty += 1
+                        g = self.hvm.solved_equations
+                        self.hvm.second_generate_level()(self)
+                        self.hvm.solved_equations = g
             else:
                 #self.hvm.current_answer = ''
                 #self.hvm.fails += 1
@@ -275,16 +344,26 @@ class VariableManager:
         if self.current_answer == '':
             return None
         if int(self.current_answer) == self.current_level[self.current_level_num][2]:
+            print(self.current_level_num)
+            print(self.current_level)
+            self.solved_equations.append(self.current_level[self.current_level_num])
             self.current_level_num += 1
             self.current_answer = ''
-            self.solved_equations.append(self.current_level[self.current_level_num])
             #self.counter = 0
             self.counter -= self.counter_num_to_add
             if self.counter < 0:
                 self.counter = 0
             self.sm.play_effect("ding")
             if self.current_level_num == self.current_level.__len__():
-                self.set_current_page(5)
+                #self.set_current_page(5)
+                if self.current_difficulty == 2:
+                    self.set_current_page(5)
+                else:
+                    self.current_difficulty += 1
+                    g = self.solved_equations
+                    #NOTE
+                    self.second_generate_level_hvm()
+                    self.solved_equations = g
         else:
             #self.current_answer = ''
             #self.fails += 1
@@ -446,7 +525,7 @@ class HomeMenu(Page):
 
         self.set_button_list([
             MainPlayButton(VariableManager.set_current_page(ai_game, 1), 700, 500),
-            SettingsButton(VariableManager.set_current_page(ai_game, 2), 50, 950),
+            #SettingsButton(VariableManager.set_current_page(ai_game, 2), 50, 950),
             MainTitle(VariableManager.none, 0, 0),
             QuitButton(VariableManager.exit_game, 1800, 1000)
         ])
